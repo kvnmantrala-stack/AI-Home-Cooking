@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cooking App - User Interview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5e6d3 0%, #e8f5e9 50%, #fff9e6 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: "🥬 🥕 🌽 🧅 🫑 🥒 🍅 🥬 🥕 🌽 🧅 🫑 🥒 🍅 🥬 🥕 🌽 🧅 🫑 🥒 🍅";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 80px;
+            opacity: 0.05;
+            z-index: -1;
+            white-space: nowrap;
+            overflow: hidden;
+            line-height: 150px;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(76, 175, 80, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #558b2f 50%, #9ccc65 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "🥕 🥬 🍅 🌽 🧅";
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            font-size: 40px;
+            opacity: 0.2;
+            letter-spacing: 20px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-greeting {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff9e6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 10px;
+        }
+
+        .step-dot {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+        }
+
+        .step-dot.active {
+            background: linear-gradient(135deg, #2e7d32 0%, #558b2f 100%);
+            color: white;
+            transform: scale(1.15);
+            border-color: #2e7d32;
+        }
+
+        .step-dot.completed {
+            background: #4caf50;
+            color: white;
+            border-color: #2e7d32;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #f1f8f5 0%, #fefdf7 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2e7d32;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #9ccc65;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 12px;
+            font-size: 24px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+            color: #2e7d32;
+            margin-bottom: 12px;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            border: 1px solid #e8f5e9;
+        }
+
+        .option:hover {
+            background: #f1f8f5;
+            border-color: #9ccc65;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin-right: 12px;
+            accent-color: #2e7d32;
+        }
+
+        .option label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+            flex: 1;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e8f5e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            background: white;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, #2e7d32 0%, #558b2f 100%);
+            color: white;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-next:disabled, .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-back:hover {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #d4edda 0%, #c8e6c9 100%);
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            border-left: 5px solid #4caf50;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #2e7d32;
+        }
+
+        .segment-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .segment-card {
+            padding: 25px;
+            border: 2px solid #e8f5e9;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f1f8f5 0%, #fefdf7 100%);
+        }
+
+        .segment-card:hover {
+            border-color: #4caf50;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .segment-card input[type="checkbox"] {
+            display: none;
+        }
+
+        .segment-card.selected {
+            border-color: #2e7d32;
+            background: linear-gradient(135deg, #c8e6c9 0%, #f1f8f5 100%);
+            border-width: 3px;
+        }
+
+        .segment-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .segment-content h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .segment-content p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .name-input-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fefdf7 100%);
+            border: 2px solid #ffe082;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .name-input-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 12px;
+        }
+
+        .name-input-box input[type="text"] {
+            border-color: #ffe082;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .header {
+                padding: 40px 25px;
+            }
+
+            .form-content {
+                padding: 25px;
+            }
+
+            .segment-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .step-dot {
+                width: 38px;
+                height: 38px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥗 AI Home Cooking Assistant</h1>
+            <p>Help us create better recipes & health tracking for your kitchen</p>
+            <div class="user-greeting" id="userGreeting"></div>
+        </div>
+
+        <div class="form-content">
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot1">1</div>
+                <div class="step-dot" id="dot2">2</div>
+                <div class="step-dot" id="dot3">3</div>
+            </div>
+
+            <form id="interviewForm">
+                <!-- STEP 1: Name & Segment Selection -->
+                <div class="step active" id="step1">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">👤</span>
+                            Who Are You?
+                        </div>
+
+                        <div class="name-input-box">
+                            <label class="name-input-label">What's your name? <span class="required">*</span></label>
+                            <input type="text" id="userName" name="user_name" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div style="color: #666; margin-bottom: 25px; font-size: 14px;">
+                            Now, tell us about your kitchen experience and health goals:
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <span class="section-icon">🎯</span>
+                            What Describes You?
+                        </div>
+                        <p style="color: #666; margin-bottom: 25px;">Select one or both that apply to you:</p>
+
+                        <div class="segment-selector">
+                            <label class="segment-card" id="cardA">
+                                <input type="checkbox" name="segment" value="segment_a">
+                                <div class="segment-icon">👨‍🍳</div>
+                                <div class="segment-content">
+                                    <h3>Learning to Cook</h3>
+                                    <p>Building confidence in the kitchen with what you have</p>
+                                </div>
+                            </label>
+
+                            <label class="segment-card" id="cardC">
+                                <input type="checkbox" name="segment" value="segment_c">
+                                <div class="segment-content">
+                                    <div class="segment-icon">💚</div>
+                                    <h3>Health-Focused</h3>
+                                    <p>Track nutrition & gut health through food</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div style="text-align: center; color: #999; font-size: 13px; margin-bottom: 30px;">
+                            ✓ Select one or both to continue
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-next" id="btn1" onclick="nextStep(1)">Continue →</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Segment A - First-Time Cooks -->
+                <div class="step" id="step2">
+                    <div id="segmentAContent">
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-icon">🥘</span>
+                                Your Cooking Habits
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How often do you cook at home? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="freq1" name="cooking_frequency" value="less_than_once" required>
+                                    <label for="freq1">Less than once a week</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="freq2" name="cooking_frequency" value="few_times">
+                                    <label for="freq2">A few times a week</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="freq3" name="cooking_frequency" value="almost_daily">
+                                    <label for="freq3">Almost every day</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How confident are you in the kitchen? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="conf1" name="confidence" value="just_started" required>
+                                    <label for="conf1">Just started learning</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="conf2" name="confidence" value="somewhat_confident">
+                                    <label for="conf2">Somewhat confident</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="conf3" name="confidence" value="very_confident">
+                                    <label for="conf3">Very confident</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What's your biggest challenge in cooking? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="chal1" name="challenges" value="what_to_cook">
+                                    <label for="chal1">Deciding what to cook 🤔</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="chal2" name="challenges" value="following_recipe">
+                                    <label for="chal2">Following recipes correctly</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="chal3" name="challenges" value="using_ingredients">
+                                    <label for="chal3">Using vegetables I have at home 🥕🥬</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="chal4" name="challenges" value="timing">
+                                    <label for="chal4">Getting timing right ⏱️</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="chal5" name="challenges" value="taste">
+                                    <label for="chal5">Making it taste good 😋</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How do you currently find recipes? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="find1" name="find_recipes" value="youtube" required>
+                                    <label for="find1">YouTube cooking videos 📹</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="find2" name="find_recipes" value="websites">
+                                    <label for="find2">Recipe websites & blogs</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="find3" name="find_recipes" value="family">
+                                    <label for="find3">Family & friends recommendations</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="find4" name="find_recipes" value="other">
+                                    <label for="find4">Other</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-icon">📱</span>
+                                How You Like to Learn
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What devices do you use most? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="dev1" name="devices" value="smartphone">
+                                    <label for="dev1">Smartphone 📱</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="dev2" name="devices" value="tablet">
+                                    <label for="dev2">Tablet</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="dev3" name="devices" value="laptop">
+                                    <label for="dev3">Laptop/Computer</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="dev4" name="devices" value="voice_speaker">
+                                    <label for="dev4">Smart speaker (Alexa, Google) 🎤</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How comfortable are you with voice commands? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="voice1" name="voice_comfort" value="never_tried" required>
+                                    <label for="voice1">Never tried</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="voice2" name="voice_comfort" value="a_bit_unsure">
+                                    <label for="voice2">A bit unsure but willing to learn</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="voice3" name="voice_comfort" value="comfortable">
+                                    <label for="voice3">Comfortable with it</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What recipe format do you prefer? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="format1" name="recipe_format" value="video" required>
+                                    <label for="format1">Videos with step-by-step visuals 📹</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="format2" name="recipe_format" value="text_pictures">
+                                    <label for="format2">Written recipes with pictures</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="format3" name="recipe_format" value="audio">
+                                    <label for="format3">Audio instructions (hands-free) 🎧</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="format4" name="recipe_format" value="no_preference">
+                                    <label for="format4">Any format works for me</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Do you cook with vegetables you already have at home? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="ingred1" name="use_available" value="rarely" required>
+                                    <label for="ingred1">Rarely - I buy specific ingredients for recipes</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="ingred2" name="use_available" value="sometimes">
+                                    <label for="ingred2">Sometimes - mix of both</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="ingred3" name="use_available" value="always">
+                                    <label for="ingred3">Always - I like using what I have 🥬</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What would make cooking easier for you?</label>
+                                <textarea name="cooking_easier" placeholder="Share your biggest frustration or wish..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="prevStep(2)">← Back</button>
+                        <button type="button" class="btn-next" onclick="nextStep(2)">Continue →</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Segment C - Health-Conscious Users -->
+                <div class="step" id="step3">
+                    <div id="segmentCContent">
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-icon">❤️</span>
+                                Your Health & Nutrition Goals
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How important is health in your food choices? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="import1" name="health_importance" value="very_important" required>
+                                    <label for="import1">Very important - health comes first</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="import2" name="health_importance" value="somewhat_important">
+                                    <label for="import2">Somewhat important</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="import3" name="health_importance" value="neutral">
+                                    <label for="import3">I balance taste & health equally</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What are your main health goals? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="goal1" name="health_goals" value="weight_management">
+                                    <label for="goal1">Manage weight healthily ⚖️</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="goal2" name="health_goals" value="more_energy">
+                                    <label for="goal2">Have more energy & stamina ⚡</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="goal3" name="health_goals" value="better_digestion">
+                                    <label for="goal3">Better digestion & gut health 🌱</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="goal4" name="health_goals" value="manage_condition">
+                                    <label for="goal4">Manage a health condition</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="goal5" name="health_goals" value="general_wellness">
+                                    <label for="goal5">General wellness & longevity</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Do you currently track nutrition? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="track1" name="track_nutrition" value="regularly" required>
+                                    <label for="track1">Yes, regularly (calories, nutrients, etc.)</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="track2" name="track_nutrition" value="sometimes">
+                                    <label for="track2">Sometimes - on & off</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="track3" name="track_nutrition" value="never">
+                                    <label for="track3">No, never tracked before</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Would you like to track calories of meals you cook at home? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="want1" name="want_track_cooking" value="very_interested" required>
+                                    <label for="want1">Very interested 📊</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="want2" name="want_track_cooking" value="somewhat_interested">
+                                    <label for="want2">Somewhat interested</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="want3" name="want_track_cooking" value="not_interested">
+                                    <label for="want3">Not interested</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Do you follow any specific diet? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="diet1" name="diet_type" value="vegetarian">
+                                    <label for="diet1">Vegetarian 🥬</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="diet2" name="diet_type" value="vegan">
+                                    <label for="diet2">Vegan</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="diet3" name="diet_type" value="low_carb">
+                                    <label for="diet3">Low carb / Keto</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="diet4" name="diet_type" value="low_fat">
+                                    <label for="diet4">Low fat / Heart healthy ❤️</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="diet5" name="diet_type" value="allergies">
+                                    <label for="diet5">Avoid certain foods (allergies)</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="diet6" name="diet_type" value="no_specific">
+                                    <label for="diet6">No specific diet</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-icon">🌱</span>
+                                Your Digestion & Gut Health
+                            </div>
+
+                            <div class="info-box">
+                                💡 Many people don't realize how their food choices affect their digestion. Let's understand yours!
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">How often do you experience digestive discomfort? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="discomfort1" name="digestive_issues" value="frequently" required>
+                                    <label for="discomfort1">Frequently - affects my daily life</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="discomfort2" name="digestive_issues" value="occasionally">
+                                    <label for="discomfort2">Occasionally - after certain meals</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="discomfort3" name="digestive_issues" value="rarely">
+                                    <label for="discomfort3">Rarely - almost never</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="discomfort4" name="digestive_issues" value="never">
+                                    <label for="discomfort4">Never - great digestion</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What digestive issues concern you most? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="issue1" name="digestive_concerns" value="bloating">
+                                    <label for="issue1">Bloating or gas 💨</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="issue2" name="digestive_concerns" value="acidity">
+                                    <label for="issue2">Acidity or heartburn 🔥</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="issue3" name="digestive_concerns" value="irregular">
+                                    <label for="issue3">Irregular digestion</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="issue4" name="digestive_concerns" value="fatigue">
+                                    <label for="issue4">Fatigue after eating</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="issue5" name="digestive_concerns" value="no_concern">
+                                    <label for="issue5">No major digestive concerns ✓</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Do you notice how different foods affect your digestion? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="notice1" name="food_effect" value="very_aware" required>
+                                    <label for="notice1">Yes, very aware of food-digestion link</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="notice2" name="food_effect" value="somewhat_aware">
+                                    <label for="notice2">Somewhat aware - sometimes notice it</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="notice3" name="food_effect" value="not_aware">
+                                    <label for="notice3">Not really aware of the connection</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Which foods typically bother you? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="checkbox" id="food1" name="problem_foods" value="spicy">
+                                    <label for="food1">Spicy foods 🌶️</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="food2" name="problem_foods" value="oily">
+                                    <label for="food2">Oily or fried foods</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="food3" name="problem_foods" value="dairy">
+                                    <label for="food3">Dairy products 🥛</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="food4" name="problem_foods" value="high_fiber">
+                                    <label for="food4">High fiber foods</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="food5" name="problem_foods" value="none">
+                                    <label for="food5">No foods specifically bother me</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">Would health alerts about your eating patterns be helpful? <span class="required">*</span></label>
+                                <div class="option">
+                                    <input type="radio" id="remind1" name="health_reminders" value="very_useful" required>
+                                    <label for="remind1">Very useful - I want early warnings 🚨</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="remind2" name="health_reminders" value="somewhat_useful">
+                                    <label for="remind2">Somewhat useful</label>
+                                </div>
+                                <div class="option">
+                                    <input type="radio" id="remind3" name="health_reminders" value="not_needed">
+                                    <label for="remind3">Not needed for me</label>
+                                </div>
+                            </div>
+
+                            <div class="question">
+                                <label class="question-label">What's your main wellness goal related to food & digestion?</label>
+                                <textarea name="wellness_goal" placeholder="E.g., improve energy levels, reduce bloating, prevent health issues..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="prevStep(3)">← Back</button>
+                        <button type="submit" class="btn-submit">Submit Response ✓</button>
+                    </div>
+
+                    <div class="success-message" id="successMessage">
+                        ✓ Thank you for sharing your insights! We'll cook better recipes for you.
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('interviewForm');
+        const cardA = document.getElementById('cardA');
+        const cardC = document.getElementById('cardC');
+        const userNameInput = document.getElementById('userName');
+        const userGreeting = document.getElementById('userGreeting');
+        let currentStep = 1;
+
+        // Update greeting as user types name
+        userNameInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                userGreeting.textContent = `Welcome, ${this.value}! 👋`;
+            } else {
+                userGreeting.textContent = '';
+            }
+        });
+
+        document.querySelectorAll('input[name="segment"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.value === 'segment_a') {
+                    cardA.classList.toggle('selected');
+                } else if (this.value === 'segment_c') {
+                    cardC.classList.toggle('selected');
+                }
+                updateNavigationButtons();
+            });
+        });
+
+        function updateNavigationButtons() {
+            const userName = userNameInput.value.trim();
+            const selectedSegments = Array.from(document.querySelectorAll('input[name="segment"]:checked')).map(cb => cb.value);
+            document.getElementById('btn1').disabled = !userName || selectedSegments.length === 0;
+        }
+
+        function nextStep(step) {
+            const selectedSegments = Array.from(document.querySelectorAll('input[name="segment"]:checked')).map(cb => cb.value);
+
+            if (step === 1) {
+                const userName = userNameInput.value.trim();
+                if (!userName || selectedSegments.length === 0) return;
+                showStep(2);
+            } else if (step === 2) {
+                if (selectedSegments.includes('segment_c')) {
+                    showStep(3);
+                } else {
+                    form.dispatchEvent(new Event('submit'));
+                }
+            }
+        }
+
+        function prevStep(step) {
+            showStep(step - 1);
+        }
+
+        function showStep(stepNum) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + stepNum).classList.add('active');
+
+            document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                if (idx + 1 < stepNum) {
+                    dot.classList.add('completed');
+                    dot.classList.remove('active');
+                } else if (idx + 1 === stepNum) {
+                    dot.classList.add('active');
+                    dot.classList.remove('completed');
+                } else {
+                    dot.classList.remove('active', 'completed');
+                }
+            });
+
+            window.scrollTo(0, 0);
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+
+            console.log('Form Data:', data);
+            console.log('User Name:', userNameInput.value);
+
+            const successMsg = document.getElementById('successMessage');
+            if (successMsg) {
+                const userName = userNameInput.value;
+                successMsg.innerHTML = `✓ Thank you, ${userName}! Your insights will help us create better recipes for you.`;
+                successMsg.style.display = 'block';
+            }
+
+            setTimeout(() => {
+                form.reset();
+                userGreeting.textContent = '';
+                document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+                document.getElementById('step1').classList.add('active');
+                document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                    if (idx === 0) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active', 'completed');
+                    }
+                });
+                if (successMsg) {
+                    successMsg.style.display = 'none';
+                    successMsg.innerHTML = '✓ Thank you for sharing your insights! We\'ll cook better recipes for you.';
+                }
+                cardA.classList.remove('selected');
+                cardC.classList.remove('selected');
+                updateNavigationButtons();
+            }, 2000);
+        });
+
+        updateNavigationButtons();
+    </script>
+</body>
+</html>
