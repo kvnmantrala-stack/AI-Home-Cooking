@@ -364,7 +364,7 @@
                 <div class="step-dot" id="dot2">2</div>
                 <div class="step-dot" id="dot3">3</div>
             </div>
-            <form id="interviewForm" method="POST">
+            <form id="interviewForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdoMxHyjMu-QHpEwaYClXq6IHxFfiwpuJE6V-qVIK4RmlsNZA/formResponse" method="POST" target="hidden-iframe">
                 <!-- STEP 1: Name & Segment Selection -->
                 <div class="step active" id="step1">
                     <div class="form-section">
@@ -801,6 +801,8 @@
             </form>
         </div>
     </div>
+    <!-- Hidden iframe for Google Forms submission -->
+    <iframe name="hidden-iframe" style="display:none;"></iframe>
     <script>
         const form = document.getElementById('interviewForm');
         const cardA = document.getElementById('cardA');
@@ -862,25 +864,35 @@
             window.scrollTo(0, 0);
         }
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Allow form submission to hidden iframe
             const successMsg = document.getElementById('successMessage');
             if (successMsg) {
                 const userName = userNameInput.value;
                 successMsg.innerHTML = `✓ Thank you, ${userName}! Your response has been recorded and will help us create better recipes for you.`;
                 successMsg.style.display = 'block';
             }
-            // Collect form data and submit to Google Forms in background
+
+            // Reset form after 3 seconds
             setTimeout(() => {
-                const formData = new FormData(form);
-                const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdoMxHyjMu-QHpEwaYClXq6IHxFfiwpuJE6V-qVIK4RmlsNZA/formResponse';
-
-                // Send via image beacon (prevents page redirect)
-                const img = new Image();
-                const params = new URLSearchParams(formData);
-                img.src = googleFormUrl + '?' + params.toString();
-
-                console.log('Form submitted to Google Forms');
-            }, 2000);
+                form.reset();
+                userGreeting.textContent = '';
+                document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+                document.getElementById('step1').classList.add('active');
+                document.querySelectorAll('.step-dot').forEach((dot, idx) => {
+                    if (idx === 0) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active', 'completed');
+                    }
+                });
+                if (successMsg) {
+                    successMsg.style.display = 'none';
+                    successMsg.innerHTML = '✓ Thank you for sharing your insights! We\'ll cook better recipes for you.';
+                }
+                cardA.classList.remove('selected');
+                cardC.classList.remove('selected');
+                updateNavigationButtons();
+            }, 3000);
         });
         updateNavigationButtons();
     </script>
