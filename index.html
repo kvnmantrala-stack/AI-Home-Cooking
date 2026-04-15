@@ -865,7 +865,7 @@
             window.scrollTo(0, 0);
         }
         form.addEventListener('submit', function(e) {
-            // Allow form submission to hidden iframe
+            // Let form submit normally to hidden iframe
             const successMsg = document.getElementById('successMessage');
             if (successMsg) {
                 const userName = userNameInput.value;
