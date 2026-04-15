@@ -838,11 +838,8 @@
                 if (!userName || selectedSegments === 0) return;
                 showStep(2);
             } else if (step === 2) {
-                if (selectedSegments > 1 || Array.from(document.querySelectorAll('input[name="entry.427217194"]:checked')).some(cb => cb.value === 'Health-Focused')) {
-                    showStep(3);
-                } else {
-                    form.dispatchEvent(new Event('submit'));
-                }
+                // Always show Step 3 after Step 2
+                showStep(3);
             }
         }
         function prevStep(step) {
@@ -872,10 +869,17 @@
                 successMsg.innerHTML = `✓ Thank you, ${userName}! Your response has been recorded and will help us create better recipes for you.`;
                 successMsg.style.display = 'block';
             }
-            // Set form action and submit to Google Forms after showing success message
+            // Collect form data and submit to Google Forms in background
             setTimeout(() => {
-                form.action = 'https://docs.google.com/forms/d/e/1FAIpQLSdoMxHyjMu-QHpEwaYClXq6IHxFfiwpuJE6V-qVIK4RmlsNZA/formResponse';
-                form.submit();
+                const formData = new FormData(form);
+                const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdoMxHyjMu-QHpEwaYClXq6IHxFfiwpuJE6V-qVIK4RmlsNZA/formResponse';
+
+                // Send via image beacon (prevents page redirect)
+                const img = new Image();
+                const params = new URLSearchParams(formData);
+                img.src = googleFormUrl + '?' + params.toString();
+
+                console.log('Form submitted to Google Forms');
             }, 2000);
         });
         updateNavigationButtons();
